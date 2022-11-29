@@ -5,4 +5,7 @@ export const TYPES = {
   //User
   UserRepository: Symbol('UserRepository'),
   UserService: Symbol('UserService'),
+
+  // Auth
+  AuthService: Symbol('AuthService'),
 };

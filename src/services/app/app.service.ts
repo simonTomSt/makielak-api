@@ -1,6 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
-import { Container, type interfaces } from 'inversify';
+import cookieParser from 'cookie-parser';
+import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import env from '@config/env';
 import { TYPES } from './ioc-types';
@@ -9,13 +10,14 @@ import { catchErrorMiddleware } from '@middleware/catch-error';
 import type { IDatabaseService } from '@services/database';
 import type { IApplication } from './app.interface';
 import { bindAllDependencies } from './ioc-bindings';
+import { container } from './ioc-container';
 
 export class Application implements IApplication {
   private readonly container: Container;
   private serverApp: express.Application;
 
-  constructor(options: interfaces.ContainerOptions) {
-    this.container = new Container(options);
+  constructor() {
+    this.container = container;
   }
 
   configureServices() {
@@ -32,6 +34,7 @@ export class Application implements IApplication {
 
     server.setConfig((app) => {
       app.use(express.json());
+      app.use(cookieParser());
       app.use(morgan('dev'));
     });
 

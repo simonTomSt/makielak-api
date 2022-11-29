@@ -4,6 +4,7 @@ import {
   DeleteOneUserDto,
   GetUserByEmailDto,
   GetUserByIdDto,
+  SignInDto,
   UpdateUserDto,
   UserDto,
 } from './dto';
@@ -15,6 +16,7 @@ export interface IUserService {
   createOne(createUserDto: CreateUserDto): Promise<UserDto>;
   deleteOne(deleteOneUserDto: DeleteOneUserDto): Promise<boolean>;
   updateOne(updateUserDto: UpdateUserDto): Promise<User>;
+  signIn(signInDto: SignInDto): Promise<string>;
 }
 
 export interface IUserRepository {

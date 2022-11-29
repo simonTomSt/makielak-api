@@ -1,11 +1,16 @@
 import { TYPES } from '@services/app/ioc-types';
-import { plainToClass } from 'class-transformer';
+import { IAuthService } from '@services/auth';
+import { TokenPayloadDto } from '@services/auth/dto';
+import { HttpError } from '@utils/http-error';
+import { JwtTokenPayload } from '@utils/types';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { inject, injectable } from 'inversify';
 import {
   CreateUserDto,
   DeleteOneUserDto,
   GetUserByEmailDto,
   GetUserByIdDto,
+  SignInDto,
   UpdateUserDto,
   UserDto,
 } from './dto';
@@ -15,8 +20,10 @@ import type { IUserRepository, IUserService } from './user.interface';
 export class UserService implements IUserService {
   constructor(
     @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepository
+    private readonly userRepository: IUserRepository,
+    @inject(TYPES.AuthService) private readonly authService: IAuthService
   ) {}
+
   async findById(getUserByIdDto: GetUserByIdDto): Promise<UserDto> {
     const user = await this.userRepository.findById(getUserByIdDto.id);
 
@@ -36,7 +43,13 @@ export class UserService implements IUserService {
   }
 
   async createOne(createUserDto: CreateUserDto): Promise<UserDto> {
-    const user = await this.userRepository.createOne(createUserDto);
+    const hashedPassword = await this.authService.hashPassword(
+      createUserDto.password
+    );
+    const user = await this.userRepository.createOne({
+      ...createUserDto,
+      password: hashedPassword,
+    });
 
     return plainToClass(UserDto, user);
   }
@@ -51,5 +64,24 @@ export class UserService implements IUserService {
     const user = await this.userRepository.updateOne(updateUserDto);
 
     return plainToClass(UserDto, user);
+  }
+
+  async signIn(signInDto: SignInDto): Promise<string> {
+    const user = await this.findByEmail(signInDto);
+
+    if (!user) throw new HttpError(404, 'User with given email not found');
+
+    const passwordMatches = this.authService.comparePasswords(
+      signInDto.password,
+      user.password
+    );
+
+    if (!passwordMatches) throw new HttpError(401, 'Unauthorized');
+
+    const tokenPayloadDto = plainToInstance(TokenPayloadDto, user, {
+      excludeExtraneousValues: true,
+    });
+
+    return this.authService.signJwt(tokenPayloadDto);
   }
 }

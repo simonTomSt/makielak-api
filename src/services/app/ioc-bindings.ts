@@ -9,6 +9,8 @@ import {
 } from '@modules/user';
 
 import { type Container } from 'inversify';
+import { AuthService } from '@services/auth/auth.service';
+import { IAuthService } from '@services/auth';
 
 export const bindAllDependencies = (container: Container) => {
   // DB
@@ -17,4 +19,7 @@ export const bindAllDependencies = (container: Container) => {
   // User
   container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
   container.bind<IUserService>(TYPES.UserService).to(UserService);
+
+  // Auth
+  container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
 };

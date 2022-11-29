@@ -2,6 +2,7 @@ import { TYPES } from '@services/app/ioc-types';
 import { BaseHttpResponse } from '@utils/base-http-response';
 import { inject } from 'inversify';
 import {
+  BaseHttpController,
   controller,
   httpDelete,
   httpGet,
@@ -16,6 +17,7 @@ import {
   DeleteOneUserDto,
   GetUserByEmailDto,
   GetUserByIdDto,
+  SignInDto,
   UpdateUserDto,
 } from './dto';
 import { ValidateRequest } from '@middleware/validate-request';
@@ -27,76 +29,93 @@ import type {
   UserResponse,
   UserDeletedResponse,
 } from '@utils/types';
+import { AuthMiddleware } from '@middleware/auth';
+import { Role } from '@prisma/client';
 
 @controller('/users')
-export class UserController {
+export class UserController extends BaseHttpController {
   constructor(
     @inject(TYPES.UserService) private readonly userService: IUserService
-  ) {}
+  ) {
+    super();
+  }
 
-  @httpGet('/')
-  async get(@request() _request: Request, @response() res: Response) {
+  @httpGet('/', AuthMiddleware.role(Role.ADMIN))
+  async get(@request() _request: Request) {
     const users = await this.userService.findAll();
 
-    const response = BaseHttpResponse.success<UsersResponse>(users, 200);
-    res.status(response.statusCode).json(response);
+    const response = BaseHttpResponse.success<UsersResponse>({ users }, 200);
+    return this.ok(response);
   }
 
-  @httpGet('/:id', ValidateRequest.with(GetUserByIdDto))
-  async getById(
-    @requestBody() getUserByIdDto: GetUserByIdDto,
-    @response() res: Response
-  ) {
+  @httpGet(
+    '/:id',
+    ValidateRequest.with(GetUserByIdDto),
+    AuthMiddleware.role(Role.SUPER_ADMIN)
+  )
+  async getById(@requestBody() getUserByIdDto: GetUserByIdDto) {
     const user = await this.userService.findById(getUserByIdDto);
 
-    const response = BaseHttpResponse.success<UserResponse>(user, 200);
-    res.status(response.statusCode).json(response);
+    const response = BaseHttpResponse.success<UserResponse>({ user }, 200);
+    return this.ok(response);
   }
 
-  @httpGet('/by-email/:email')
-  async getByEmail(
-    @requestBody() getUserByEmailDto: GetUserByEmailDto,
-    @response() res: Response
-  ) {
+  @httpGet(
+    '/by-email/:email',
+    ValidateRequest.with(GetUserByEmailDto),
+    AuthMiddleware.role(Role.SUPER_ADMIN)
+  )
+  async getByEmail(@requestBody() getUserByEmailDto: GetUserByEmailDto) {
     const user = await this.userService.findByEmail(getUserByEmailDto);
 
-    const response = BaseHttpResponse.success<UserResponse>(user, 200);
-    res.status(response.statusCode).json(response);
+    const response = BaseHttpResponse.success<UserResponse>({ user }, 200);
+    return this.ok(response);
   }
 
   @httpPost('/', ValidateRequest.with(CreateUserDto))
-  async createOne(
-    @requestBody() createUserDto: CreateUserDto,
-    @response() res: Response
-  ) {
+  async createOne(@requestBody() createUserDto: CreateUserDto) {
     const user = await this.userService.createOne(createUserDto);
 
-    const response = BaseHttpResponse.success<UserResponse>(user, 201);
-    res.status(response.statusCode).json(response);
+    const response = BaseHttpResponse.success<UserResponse>({ user }, 201);
+    return this.ok(response);
   }
 
-  @httpPatch('/:id', ValidateRequest.with(UpdateUserDto))
-  async updateOne(
-    @requestBody() updateUserDto: UpdateUserDto,
-    @response() res: Response
-  ) {
+  @httpPatch(
+    '/:id',
+    ValidateRequest.with(UpdateUserDto),
+    AuthMiddleware.role(Role.SUPER_ADMIN)
+  )
+  async updateOne(@requestBody() updateUserDto: UpdateUserDto) {
     const user = await this.userService.updateOne(updateUserDto);
 
-    const response = BaseHttpResponse.success<UserDeletedResponse>(user, 200);
-    res.status(response.statusCode).json(response);
+    const response = BaseHttpResponse.success<UserDeletedResponse>(
+      { user },
+      200
+    );
+    return this.ok(response);
   }
 
-  @httpDelete('/:id', ValidateRequest.with(DeleteOneUserDto))
-  async deleteOne(
-    @requestBody() deleteOneUserDto: DeleteOneUserDto,
-    @response() res: Response
-  ) {
+  @httpDelete(
+    '/:id',
+    ValidateRequest.with(DeleteOneUserDto),
+    AuthMiddleware.role(Role.SUPER_ADMIN)
+  )
+  async deleteOne(@requestBody() deleteOneUserDto: DeleteOneUserDto) {
     const deleted = await this.userService.deleteOne(deleteOneUserDto);
 
     const response = BaseHttpResponse.success<UserDeletedResponse>(
-      deleted,
+      { deleted },
       200
     );
-    res.status(response.statusCode).json(response);
+    return this.ok(response);
+  }
+
+  @httpPost('/auth/sing-in', ValidateRequest.with(SignInDto))
+  async signIn(@requestBody() signInDto: SignInDto, @response() res: Response) {
+    const token = await this.userService.signIn(signInDto);
+
+    res.status(200).cookie('token', token, {
+      httpOnly: true,
+    });
   }
 }

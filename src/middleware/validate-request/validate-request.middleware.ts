@@ -2,11 +2,14 @@ import { BaseHttpResponse } from '@utils/base-http-response';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import type { Response, Request, NextFunction } from 'express';
+import { BaseMiddleware } from 'inversify-express-utils';
 
-export class ValidateRequest {
-  constructor(private readonly dtoClass: any) {}
+export class ValidateRequest extends BaseMiddleware {
+  constructor(private readonly dtoClass: any) {
+    super();
+  }
 
-  public execute = async (req: Request, res: Response, next: NextFunction) => {
+  public handler = async (req: Request, res: Response, next: NextFunction) => {
     const mergedBodyWithQuery = { ...req.body, ...req.query, ...req.params };
     req.body = plainToInstance(this.dtoClass, mergedBodyWithQuery);
 
@@ -23,6 +26,6 @@ export class ValidateRequest {
   };
 
   static with(dto: any) {
-    return new ValidateRequest(dto).execute;
+    return new ValidateRequest(dto).handler;
   }
 }

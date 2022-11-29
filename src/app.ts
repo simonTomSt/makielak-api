@@ -4,9 +4,7 @@ import { Application } from '@services/app';
 
 const bootstrap = async () => {
   try {
-    const app = new Application({
-      defaultScope: 'Singleton',
-    });
+    const app = new Application();
 
     app.configureServices();
 
