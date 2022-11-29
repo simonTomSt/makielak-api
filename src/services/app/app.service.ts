@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { Container } from 'inversify';
@@ -11,6 +12,7 @@ import type { IDatabaseService } from '@services/database';
 import type { IApplication } from './app.interface';
 import { bindAllDependencies } from './ioc-bindings';
 import { container } from './ioc-container';
+import { corsOptions } from '@config/corsOptions';
 
 export class Application implements IApplication {
   private readonly container: Container;
@@ -33,6 +35,7 @@ export class Application implements IApplication {
     const server = new InversifyExpressServer(this.container);
 
     server.setConfig((app) => {
+      app.use(cors(corsOptions));
       app.use(express.json());
       app.use(cookieParser());
       app.use(morgan('dev'));
