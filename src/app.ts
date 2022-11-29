@@ -14,6 +14,7 @@ const bootstrap = async () => {
     app.listen();
   } catch (e) {
     console.error(e);
+    process.exit();
   }
 };
 

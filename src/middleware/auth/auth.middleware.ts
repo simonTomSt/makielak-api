@@ -37,7 +37,7 @@ export class AuthMiddleware extends BaseMiddleware {
       next();
     } catch (e) {
       const response = BaseHttpResponse.failed('Unauthorized', 401);
-      res.status(401).json(response);
+      return res.clearCookie('token').status(401).json(response);
     }
   };
 

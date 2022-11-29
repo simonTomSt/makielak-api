@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
     "start": "node ./dist/app.js",
-    "build": "npx tsc && tsc-alias",
-    "typeorm": "typeorm-ts-node-commonjs -d ./src/config/datasource.ts"
+    "build": "npx tsc && tsc-alias"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

@@ -40,7 +40,7 @@ export class UserController extends BaseHttpController {
     super();
   }
 
-  @httpGet('/', AuthMiddleware.role(Role.ADMIN))
+  @httpGet('/', AuthMiddleware.role(Role.SUPER_ADMIN))
   async get(@request() _request: Request) {
     const users = await this.userService.findAll();
 
