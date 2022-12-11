@@ -8,6 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 
 export class CreateUserDto {
   @IsEmail()
@@ -28,3 +29,5 @@ export class CreateUserDto {
   @IsOptional()
   public role: Role;
 }
+
+export const CreateUserDtoSchema = validationMetadatasToSchemas();

@@ -16,7 +16,7 @@
       "@utils/*": ["src/utils/*"],
       "@types/*": ["src/types/*"]
     },
-    "types": ["reflect-metadata"],
+    "types": ["reflect-metadata", "node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   }

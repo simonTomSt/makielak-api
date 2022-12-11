@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 
 export class SignInDto {
   @IsEmail()
@@ -9,3 +10,5 @@ export class SignInDto {
   @IsNotEmpty()
   public password: string;
 }
+
+export const SignInDtoSchema = validationMetadatasToSchemas();

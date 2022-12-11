@@ -110,12 +110,25 @@ export class UserController extends BaseHttpController {
     return this.ok(response);
   }
 
-  @httpPost('/auth/sing-in', ValidateRequest.with(SignInDto))
+  @httpPost('/auth/sign-in', ValidateRequest.with(SignInDto))
   async signIn(@requestBody() signInDto: SignInDto, @response() res: Response) {
     const token = await this.userService.signIn(signInDto);
 
-    res.status(200).cookie('token', token, {
-      httpOnly: true,
-    });
+    const response = BaseHttpResponse.success<{ token: string }>(
+      { token },
+      200
+    );
+
+    res
+      .cookie('token', token, {
+        httpOnly: false,
+      })
+      .status(response.statusCode)
+      .json(response);
+  }
+
+  @httpPost('/auth/sign-out')
+  async signOut(_request: Request, res: Response) {
+    res.clearCookie('token').status(200);
   }
 }

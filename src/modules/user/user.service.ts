@@ -1,8 +1,6 @@
 import { TYPES } from '@services/app/ioc-types';
 import { IAuthService } from '@services/auth';
-import { TokenPayloadDto } from '@services/auth/dto';
 import { HttpError } from '@utils/http-error';
-import { JwtTokenPayload } from '@utils/types';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { inject, injectable } from 'inversify';
 import {
@@ -13,6 +11,7 @@ import {
   SignInDto,
   UpdateUserDto,
   UserDto,
+  UserOutDto,
 } from './dto';
 import type { IUserRepository, IUserService } from './user.interface';
 
@@ -61,7 +60,13 @@ export class UserService implements IUserService {
   }
 
   async updateOne(updateUserDto: UpdateUserDto): Promise<UserDto> {
-    const user = await this.userRepository.updateOne(updateUserDto);
+    const password = updateUserDto.password
+      ? await this.authService.hashPassword(updateUserDto.password)
+      : undefined;
+    const user = await this.userRepository.updateOne({
+      ...updateUserDto,
+      password,
+    });
 
     return plainToClass(UserDto, user);
   }
@@ -71,14 +76,14 @@ export class UserService implements IUserService {
 
     if (!user) throw new HttpError(404, 'User with given email not found');
 
-    const passwordMatches = this.authService.comparePasswords(
+    const passwordMatches = await this.authService.comparePasswords(
       signInDto.password,
       user.password
     );
 
     if (!passwordMatches) throw new HttpError(401, 'Unauthorized');
 
-    const tokenPayloadDto = plainToInstance(TokenPayloadDto, user, {
+    const tokenPayloadDto = plainToInstance(UserOutDto, user, {
       excludeExtraneousValues: true,
     });
 

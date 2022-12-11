@@ -18,6 +18,29 @@ model User {
     role          Role     @default(ADMIN)
 }
 
+model Product {
+    id            String    @id @default(uuid())
+    thumbnailUrl  String   
+    photoUrl      String   
+    name          String
+    category      Category  @relation(fields: [categoryId], references: [id])
+    categoryId    String
+}
+
+model Category {
+    id            String   @id @default(uuid())
+    thumbnailUrl  String   
+    photoUrl      String   
+    name          String
+    products      Product[]
+}
+
+model Content {
+    id            String   @id @default(uuid())
+    name          String
+    structure     Json
+}
+
 enum Role {
   SUPER_ADMIN
   ADMIN

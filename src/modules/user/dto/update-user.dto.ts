@@ -6,7 +6,10 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
+import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 
 export class UpdateUserDto {
   @IsUUID()
@@ -21,7 +24,16 @@ export class UpdateUserDto {
   @IsOptional()
   public name?: string | null;
 
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  @MaxLength(64)
+  public password: string;
+
   @IsEnum(Role)
   @IsOptional()
   public role?: Role;
 }
+
+export const UpdateUserDtoSchema = validationMetadatasToSchemas();

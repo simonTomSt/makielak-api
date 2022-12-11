@@ -13,6 +13,8 @@ import type { IApplication } from './app.interface';
 import { bindAllDependencies } from './ioc-bindings';
 import { container } from './ioc-container';
 import { corsOptions } from '@config/corsOptions';
+import swaggerUi from 'swagger-ui-express';
+import openapiSpecification, { getApiAsJson } from 'src/docs/open-api';
 
 export class Application implements IApplication {
   private readonly container: Container;
@@ -35,6 +37,12 @@ export class Application implements IApplication {
     const server = new InversifyExpressServer(this.container);
 
     server.setConfig((app) => {
+      app.use(
+        '/api-docs',
+        swaggerUi.serve,
+        swaggerUi.setup(openapiSpecification)
+      );
+      app.get('/swagger.json', getApiAsJson);
       app.use(cors(corsOptions));
       app.use(express.json());
       app.use(cookieParser());

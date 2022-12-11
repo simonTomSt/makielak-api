@@ -21,7 +21,8 @@ export class AuthMiddleware extends BaseMiddleware {
     const token = req.cookies.token;
 
     if (!token) {
-      throw new Error('Unauthorized');
+      const response = BaseHttpResponse.failed('Unauthorized', 401);
+      return res.clearCookie('token').status(401).json(response);
     }
 
     try {

@@ -19,7 +19,7 @@ export class ValidateRequest extends BaseMiddleware {
       const errorMessage = Object.values(errors[0].constraints)?.[0];
 
       const response = BaseHttpResponse.failed(errorMessage, 400);
-      res.status(response.statusCode).json(response);
+      return res.status(response.statusCode).json(response);
     }
 
     next();
