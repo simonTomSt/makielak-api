@@ -1,4 +1,3 @@
-import { GetUserByIdDtoSchema } from '@modules/user/dto';
 import { getByRef } from 'src/docs/shared';
 import { usersSchemas } from './user.schema.docs';
 

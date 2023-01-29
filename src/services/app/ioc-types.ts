@@ -8,4 +8,12 @@ export const TYPES = {
 
   // Auth
   AuthService: Symbol('AuthService'),
+
+  // Content
+  ContentRepository: Symbol('ContentRepository'),
+  ContentService: Symbol('ContentService'),
+
+  //Storage
+  StorageRepository: Symbol('StorageRepository'),
+  StorageService: Symbol('StorageService'),
 };

@@ -1,10 +1,3 @@
-import {
-  CreateUserDtoSchema,
-  GetUserByIdDtoSchema,
-  SignInDtoSchema,
-  UpdateUserDtoSchema,
-  UserOutDtoSchema,
-} from '@modules/user/dto';
 import { Role as UserRole } from '@prisma/client';
 import { createResponseSchema, getByRef } from 'src/docs/shared';
 
@@ -55,13 +48,6 @@ export const Role = {
 };
 
 export const usersSchemas = {
-  // DTO
-  UserOutDto: UserOutDtoSchema.UserOutDto,
-  CreateUserDto: CreateUserDtoSchema.CreateUserDto,
-  GetUserByIdDto: GetUserByIdDtoSchema.GetUserByIdDto,
-  SignInDto: SignInDtoSchema.SignInDto,
-  UpdateUserDto: UpdateUserDtoSchema.UpdateUserDto,
-
   // Response
   UserResponse,
   UsersResponse,

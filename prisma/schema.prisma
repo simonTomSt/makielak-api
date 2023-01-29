@@ -37,11 +37,31 @@ model Category {
 
 model Content {
     id            String   @id @default(uuid())
-    name          String
+    name          ContentType
     structure     Json
+}
+
+model File {
+    id            String   @id @default(uuid())
+    type          FileType
+    url           String
+}
+
+enum FileType {
+  PDF
+  IMAGE
 }
 
 enum Role {
   SUPER_ADMIN
   ADMIN
+}
+
+enum ContentType {
+  HOME_PAGE
+  ABOUT_US
+  SERVICES
+  CERTIFICATES
+  CONTACT
+  FOOTER
 }

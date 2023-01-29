@@ -46,6 +46,7 @@ export class Application implements IApplication {
       app.use(cors(corsOptions));
       app.use(express.json());
       app.use(cookieParser());
+      app.use('/public', express.static('public'));
       app.use(morgan('dev'));
     });
 

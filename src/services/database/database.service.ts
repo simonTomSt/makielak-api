@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { IDatabaseService } from './database.interface';
 
-import type { DBClient, UserCtx } from '@utils/types';
+import type { ContentCtx, DBClient, FileCtx, UserCtx } from '@utils/types';
 
 @injectable()
 export class DatabaseService implements IDatabaseService {
@@ -18,6 +18,14 @@ export class DatabaseService implements IDatabaseService {
 
   userCtx(): UserCtx {
     return this.dbClient.user;
+  }
+
+  contentCtx(): ContentCtx {
+    return this.dbClient.content;
+  }
+
+  fileCtx(): FileCtx {
+    return this.dbClient.file;
   }
 
   async disconnect(): Promise<void> {

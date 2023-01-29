@@ -1,6 +1,5 @@
 import { Role } from '@prisma/client';
 import { IsEmail, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
-import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 
 export class UserDto {
   @IsUUID()
@@ -22,5 +21,3 @@ export class UserDto {
   @IsNotEmpty()
   public role: Role;
 }
-
-export const UserDtoSchema = validationMetadatasToSchemas();

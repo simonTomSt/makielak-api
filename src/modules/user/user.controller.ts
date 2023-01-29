@@ -40,7 +40,7 @@ export class UserController extends BaseHttpController {
     super();
   }
 
-  @httpGet('/', AuthMiddleware.role(Role.SUPER_ADMIN))
+  @httpGet('/', AuthMiddleware.roles([Role.SUPER_ADMIN]))
   async get(@request() _request: Request) {
     const users = await this.userService.findAll();
 
@@ -51,7 +51,7 @@ export class UserController extends BaseHttpController {
   @httpGet(
     '/:id',
     ValidateRequest.with(GetUserByIdDto),
-    AuthMiddleware.role(Role.SUPER_ADMIN)
+    AuthMiddleware.roles([Role.SUPER_ADMIN])
   )
   async getById(@requestBody() getUserByIdDto: GetUserByIdDto) {
     const user = await this.userService.findById(getUserByIdDto);
@@ -63,7 +63,7 @@ export class UserController extends BaseHttpController {
   @httpGet(
     '/by-email/:email',
     ValidateRequest.with(GetUserByEmailDto),
-    AuthMiddleware.role(Role.SUPER_ADMIN)
+    AuthMiddleware.roles([Role.SUPER_ADMIN])
   )
   async getByEmail(@requestBody() getUserByEmailDto: GetUserByEmailDto) {
     const user = await this.userService.findByEmail(getUserByEmailDto);
@@ -83,7 +83,7 @@ export class UserController extends BaseHttpController {
   @httpPatch(
     '/:id',
     ValidateRequest.with(UpdateUserDto),
-    AuthMiddleware.role(Role.SUPER_ADMIN)
+    AuthMiddleware.roles([Role.SUPER_ADMIN, Role.ADMIN])
   )
   async updateOne(@requestBody() updateUserDto: UpdateUserDto) {
     const user = await this.userService.updateOne(updateUserDto);
@@ -98,7 +98,7 @@ export class UserController extends BaseHttpController {
   @httpDelete(
     '/:id',
     ValidateRequest.with(DeleteOneUserDto),
-    AuthMiddleware.role(Role.SUPER_ADMIN)
+    AuthMiddleware.roles([Role.SUPER_ADMIN])
   )
   async deleteOne(@requestBody() deleteOneUserDto: DeleteOneUserDto) {
     const deleted = await this.userService.deleteOne(deleteOneUserDto);

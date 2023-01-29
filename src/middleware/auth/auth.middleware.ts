@@ -8,7 +8,7 @@ import { IAuthService } from '@services/auth';
 import { AuthRequest } from '@utils/types';
 
 export class AuthMiddleware extends BaseMiddleware {
-  constructor(private readonly role?: Role) {
+  constructor(private readonly roles?: Role[]) {
     super();
   }
 
@@ -28,7 +28,11 @@ export class AuthMiddleware extends BaseMiddleware {
     try {
       const tokenPayload = await authService.verifyJwt(token);
 
-      if (this.role && this.role !== tokenPayload.payload.role) {
+      if (
+        this.roles &&
+        !this.roles.includes(tokenPayload.payload.role) &&
+        tokenPayload.payload.role !== Role.SUPER_ADMIN
+      ) {
         const response = BaseHttpResponse.failed('Forbidden', 403);
         return res.status(response.statusCode).json(response);
       }
@@ -42,7 +46,7 @@ export class AuthMiddleware extends BaseMiddleware {
     }
   };
 
-  static role(role: Role) {
-    return new AuthMiddleware(role).handler;
+  static roles(roles: Role[]) {
+    return new AuthMiddleware(roles).handler;
   }
 }

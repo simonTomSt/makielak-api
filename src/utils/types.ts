@@ -1,8 +1,10 @@
 import { UserDto } from '@modules/user/dto';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { FileType, Prisma, PrismaClient } from '@prisma/client';
 import { TokenPayloadDto } from '@services/auth/dto';
 import { JwtPayload } from 'jsonwebtoken';
 import { Request } from 'express';
+import { ContentDto } from '@modules/content/dto';
+import { FileDto } from '@modules/storage/dto';
 
 // DB Context
 export type DBClient = PrismaClient<
@@ -10,8 +12,13 @@ export type DBClient = PrismaClient<
   never,
   Prisma.RejectOnNotFound | Prisma.RejectPerOperation
 >;
-
 export type UserCtx = Prisma.UserDelegate<
+  Prisma.RejectOnNotFound | Prisma.RejectPerOperation
+>;
+export type ContentCtx = Prisma.ContentDelegate<
+  Prisma.RejectOnNotFound | Prisma.RejectPerOperation
+>;
+export type FileCtx = Prisma.FileDelegate<
   Prisma.RejectOnNotFound | Prisma.RejectPerOperation
 >;
 
@@ -27,4 +34,21 @@ export interface JwtTokenPayload extends JwtPayload {
 
 export interface AuthRequest extends Request {
   user: TokenPayloadDto;
+}
+
+// Content
+export type ContentResponse = {
+  content: ContentDto;
+};
+
+// Storage
+export type FileResponse = {
+  file: FileDto;
+};
+
+export interface FileUploadRequest extends Request {
+  file: Express.Multer.File;
+  query: {
+    type: FileType;
+  };
 }
