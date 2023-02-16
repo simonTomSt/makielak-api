@@ -15,9 +15,20 @@ const FileResponse = createResponseSchema(
   201
 );
 
+const DeletedFileResponse = createResponseSchema(
+  {
+    deleted: {
+      type: 'boolean',
+      example: 'true',
+    },
+  },
+  200
+);
+
 export const storageSchemas = {
   // Response
   FileResponse,
+  DeletedFileResponse,
 
   // Other
   FileType,

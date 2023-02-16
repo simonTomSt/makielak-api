@@ -4,23 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import type { Response, Request, NextFunction } from 'express';
 import { BaseMiddleware } from 'inversify-express-utils';
-import {
-  AboutUsStructureDto,
-  CertificatesStructureDto,
-  FooterStructureDto,
-  HomePageStructureDto,
-  ServicesStructureDto,
-} from './dto/structures';
-import { ContactStructureDto } from './dto/structures/contact-structure.dto';
-
-const contentTypeDtoMap = {
-  [ContentType.HOME_PAGE]: HomePageStructureDto,
-  [ContentType.ABOUT_US]: AboutUsStructureDto,
-  [ContentType.SERVICES]: ServicesStructureDto,
-  [ContentType.CERTIFICATES]: CertificatesStructureDto,
-  [ContentType.CONTACT]: ContactStructureDto,
-  [ContentType.FOOTER]: FooterStructureDto,
-};
+import { contentTypeDtoMap } from './content.contstants';
 
 export class ValidateContentStructure extends BaseMiddleware {
   constructor() {

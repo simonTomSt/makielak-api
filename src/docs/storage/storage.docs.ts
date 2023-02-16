@@ -10,7 +10,7 @@ export const storageDocs = {
       post: {
         operationId: 'storeFile',
         tags: [storageTag],
-        summary: 'Store a file',
+        summary: 'Stores a file',
         parameters: [
           {
             in: 'query',
@@ -50,6 +50,36 @@ export const storageDocs = {
           },
         },
       },
+    },
+    '/store/file/{id}': {
+      delete: {
+        operationId: 'deleteFile',
+        tags: [storageTag],
+        summary: 'Deletes stored file',
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            required: true,
+            description: 'file id',
+            schema: {
+              $ref: getByRef('UUID'),
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Deleted file response',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: getByRef('DeletedFileResponse'),
+                },
+              },
+            },
+          },
+        },
+      }
     },
   },
   components: {

@@ -9,6 +9,7 @@ import {
   BaseHttpController,
   httpPost,
   requestBody,
+  httpDelete,
 } from 'inversify-express-utils';
 import { DeleteFileDto, StoreFileDto } from './dto';
 import { IStorageService } from './storage.interface';
@@ -22,10 +23,10 @@ export class StorageController extends BaseHttpController {
     super();
   }
 
-  @httpPost(
-    '/file/delete',
+  @httpDelete(
+    '/file/:id',
     UploadFile.single(),
-    ValidateRequest.with(StoreFileDto)
+    ValidateRequest.with(DeleteFileDto)
   )
   async deleteFile(@requestBody() deleteFileDto: DeleteFileDto) {
     const deleted = await this.storageService.deleteFile(deleteFileDto);

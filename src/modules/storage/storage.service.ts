@@ -3,6 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { inject, injectable } from 'inversify';
 import { DeleteFileDto, FileDto, GetFilesDto, StoreFileDto } from './dto';
 import { IStorageRepository, IStorageService } from './storage.interface';
+import fs from 'fs/promises'
 
 @injectable()
 export class StorageService implements IStorageService {
@@ -24,6 +25,10 @@ export class StorageService implements IStorageService {
   }
 
   async deleteFile(deleteFileDto: DeleteFileDto): Promise<boolean> {
-    return this.storageRepository.deleteFile(deleteFileDto.id);
+    const [file] = await this.storageRepository.getFilesByIds([deleteFileDto.id]);
+    await this.storageRepository.deleteFile(deleteFileDto.id);
+    await fs.unlink(file.url)
+
+    return true
   }
 }
